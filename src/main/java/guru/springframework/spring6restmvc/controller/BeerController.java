@@ -1,8 +1,10 @@
 package guru.springframework.spring6restmvc.controller;
 
+import java.util.List;
 import java.util.UUID;
 
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import guru.springframework.spring6restmvc.model.Beer;
 import guru.springframework.spring6restmvc.service.BeerService;
@@ -11,9 +13,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @AllArgsConstructor
-@Controller
+@RestController
 public class BeerController {
     private final BeerService beerService;
+
+    @RequestMapping("/api/v1/beer")
+    public List<Beer> listBeers() {
+        return beerService.listBeers();
+    }
 
     public Beer getBeerById(UUID id) {
         log.debug("Get Beer by Id in Controller");
