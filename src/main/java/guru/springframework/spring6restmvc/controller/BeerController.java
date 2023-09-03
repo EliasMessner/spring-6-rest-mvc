@@ -3,6 +3,7 @@ package guru.springframework.spring6restmvc.controller;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,8 +27,12 @@ public class BeerController {
 
     @PostMapping
     public ResponseEntity<Beer> handlePost(@RequestBody Beer beer) {
-        beerService.saveNewBeer(beer);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        Beer savedBeer = beerService.saveNewBeer(beer);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", "api/v1/beer/" + savedBeer.getId().toString());
+
+        return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.GET)
