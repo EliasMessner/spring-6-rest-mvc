@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,11 +26,18 @@ import lombok.AllArgsConstructor;
 public class CustomerController {
     private final CustomerService customerService;
 
+    @PatchMapping("{id}")
+    public ResponseEntity<Customer> patchCustomerById(@PathVariable("id") UUID customerId, @RequestBody Customer customer) {
+        customerService.patchById(customerId, customer);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @DeleteMapping("{id}")
     public ResponseEntity<Customer> deleteCustomerById(@PathVariable("id") UUID customerId) {
         customerService.deleteById(customerId);
 
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("{id}")
