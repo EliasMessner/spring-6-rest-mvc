@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,13 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/api/v1/customer")
 public class CustomerController {
     private final CustomerService customerService;
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Customer> deleteCustomerById(@PathVariable("id") UUID customerId) {
+        customerService.deleteById(customerId);
+
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
 
     @PutMapping("{id}")
     public ResponseEntity<Customer> updateCustomerById(@PathVariable("id") UUID customerId, @RequestBody Customer customer) {
