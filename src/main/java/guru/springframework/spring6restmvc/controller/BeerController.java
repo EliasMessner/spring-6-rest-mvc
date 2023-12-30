@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class BeerController {
     private final BeerService beerService;
 
-    @PostMapping
+    @PostMapping  // short for and preferred over RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Beer> handlePost(@RequestBody Beer beer) {
         Beer savedBeer = beerService.saveNewBeer(beer);
 
@@ -35,7 +35,7 @@ public class BeerController {
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)  // verbose, use GetMapping instead.
     public List<Beer> listBeers() {
         return beerService.listBeers();
     }
