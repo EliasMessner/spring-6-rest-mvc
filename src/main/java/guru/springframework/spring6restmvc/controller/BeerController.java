@@ -27,7 +27,7 @@ public class BeerController {
     private final BeerService beerService;
 
     @PutMapping("{beerId}")
-    public ResponseEntity<Beer> updateById(UUID beerId, @RequestBody Beer beer) {
+    public ResponseEntity<Beer> updateById(@PathVariable UUID beerId, @RequestBody Beer beer) {
 
         beerService.updateBeerById(beerId, beer);
 
