@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -14,6 +15,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -50,9 +53,30 @@ class BeerControllerTest {
     @Captor
     ArgumentCaptor<UUID> uuidArgumentCaptor;
 
+    @Captor
+    ArgumentCaptor<Beer> beerArgumentCaptor;
+
     @BeforeEach
     void setUp() {
         beerServiceImpl = new BeerServiceImpl();
+    }
+
+    @Test
+    void patchBeer() throws Exception {
+        Beer existingBeer = beerServiceImpl.listBeers().get(0);
+
+        Map<String, Object> beerMap = new HashMap<>();
+        beerMap.put("beerName", "New Name");
+
+        mockMvc.perform(patch("/api/v1/beer/" + existingBeer.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beerMap)))
+                .andExpect(status().isNoContent());
+
+        verify(beerService).patchById(uuidArgumentCaptor.capture(), beerArgumentCaptor.capture());
+        assertThat(uuidArgumentCaptor.getValue()).isEqualTo(existingBeer.getId());
+        assertThat(beerArgumentCaptor.getValue().getBeerName()).isEqualTo(beerMap.get("beerName"));
     }
 
     @Test
@@ -60,7 +84,7 @@ class BeerControllerTest {
         Beer beer = beerServiceImpl.listBeers().get(0);
 
         mockMvc.perform(delete("/api/v1/beer/" + beer.getId())
-                .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
         // we use argument captor for more complex analyses
@@ -74,9 +98,9 @@ class BeerControllerTest {
         Beer beer = beerServiceImpl.listBeers().get(0);
 
         mockMvc.perform(put("/api/v1/beer/" + beer.getId())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(beer)))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beer)))
                 .andExpect(status().isNoContent());
 
         verify(beerService).updateBeerById(beer.getId(), beer);
@@ -106,7 +130,7 @@ class BeerControllerTest {
         given(beerService.listBeers()).willReturn(beerServiceImpl.listBeers());
 
         mockMvc.perform(get("/api/v1/beer")
-                .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()", is(3)));
@@ -119,7 +143,7 @@ class BeerControllerTest {
         given(beerService.getBeerById(testBeer.getId())).willReturn(testBeer);
 
         mockMvc.perform(get("/api/v1/beer/" + testBeer.getId())
-                .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(testBeer.getId().toString())));
