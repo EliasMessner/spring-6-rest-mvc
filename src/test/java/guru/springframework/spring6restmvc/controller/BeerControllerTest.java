@@ -64,7 +64,6 @@ class BeerControllerTest {
     @Test
     void patchBeer() throws Exception {
         Beer existingBeer = beerServiceImpl.listBeers().get(0);
-
         Map<String, Object> beerMap = new HashMap<>();
         beerMap.put("beerName", "New Name");
 
