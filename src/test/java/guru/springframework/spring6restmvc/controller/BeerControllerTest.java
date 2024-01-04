@@ -63,8 +63,8 @@ class BeerControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
-        // we use argument captor to capture the argument, useful for more complex analyses
-        // in simple cases we could also do verify(beerService).deleteById(beer.getId())
+        // we use argument captor useful for more complex analyses
+        // in simple cases we can just use verify(beerService).deleteById(beer.getId()) instead
         verify(beerService).deleteById(uuidArgumentCaptor.capture());
         assertThat(beer.getId()).isEqualTo(uuidArgumentCaptor.getValue());
     }
